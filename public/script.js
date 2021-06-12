@@ -13,8 +13,7 @@ let time1;
 let firstTime = true;
 let sourceId = null;
 let myUserList = [];
-let receivedPlayAction = null;
-let receivedPauseAction = null;
+let receivedAction = null;
 
 setInterval(() => {
   time1 = Date.now();
@@ -35,7 +34,7 @@ socket.on('pong', (time2) => {
 })
 
 socket.on('play', (initialTime, initialDate, action) => {
-  receivedPlayAction = action;
+  receivedAction = action;
 
   if (action.user === myId) return;
 
@@ -44,55 +43,46 @@ socket.on('play', (initialTime, initialDate, action) => {
   video.currentTime = initialTime + timeDiff;
 
   video.play();
+
 });
 
-socket.on('pause', (action) => {
-  receivedPauseAction = action;
-
-  if (action.user === myId) return;
-
+socket.on('pause', () => {
   video.pause();
+  receivedAction = null;
 });
 
 socket.on('uploaded', (user, fileName) => {
   video.insertAdjacentHTML('beforebegin', `
-    <h4>User ${user} uploaded: ${fileName} and invited you to upload the same file.</h4>
+    <h4>User ${user} uploaded: ${fileName} and invites you to upload the same file.</h4>
   `);
 
   video.currentTime = 0;
-  // video.play();
+  video.pause();
 });
 
 // video.addEventListener('seeked', () => {
-//   if (firstTime) {
-//     firstTime = false;
-//     return
-//   }
-
+//   // if (firstTime) {
+//   //   firstTime = false;
+//   //   return
+//   // }
 //   video.pause();
+//   socket.emit('pause', Date.now());
 // })
 
 video.addEventListener('play', () => {
-  const action = receivedPlayAction || {
+  const action = receivedAction || {
     id: Math.random().toString().slice(16),
     user: myId,
     date: Date.now()
   };
 
   socket.emit('play', video.currentTime, Date.now(), action);
-  receivedPlayAction = null;
+  receivedAction = null;
 })
 
 video.addEventListener('pause', () => {
-  const action = receivedPauseAction || {
-    id: Math.random().toString().slice(16),
-    user: myId,
-    date: Date.now()
-  };
-
-  socket.emit('pause', action);
-  receivedPauseAction = null;
-  receivedPlayAction = null;
+  receivedAction = null;
+  socket.emit('pause', Date.now());
 })
 
 btnUploadVideo.addEventListener('click', (e) => {
@@ -110,6 +100,5 @@ btnUploadVideo.addEventListener('click', (e) => {
   socket.emit('uploaded', myId, inputVideo.files[0].name);
 
   video.load();
-  video.currentTime = 0;
 });
 

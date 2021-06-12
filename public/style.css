@@ -8,11 +8,17 @@
   display: none;
 }
 
+.video-form {
+  width: 50%;
+  margin: 1rem auto;
+}
+
 .player-container {
   width: 50%;
   background-color: tomato;
   display: flex;
   flex-direction: column;
+  margin: 0 auto;
 }
 
 #my-video {
@@ -22,15 +28,30 @@
 .player-controls {
   height: 2rem;
   background-color: blueviolet;
+  z-index: 999;
 }
 
 .progress-bar {
   background-color: aqua;
-  height: 0.2rem;
+  height: 0.6rem;
+  cursor: pointer;
 }
 
 .progress-bar-fill {
   background-color: rgb(255, 136, 0);
   height: 100%;
-  transition: all 1s;
+  transition: all 0.1s;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: visible;
+}
+
+.draggable {
+  position: absolute;
+  /* border-radius: 50%; */
+  /* margin-left: -0.5rem; */
+  height: 0.6rem;
+  width: 0.6rem;
+  background-color: lightseagreen;
 }

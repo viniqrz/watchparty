@@ -9,7 +9,7 @@
     <title>VideoJS</title>
   </head>
   <body>
-    <form id="video-form">
+    <form class="video-form">
       <input class="input-video" type="file" accept="video/*" required />
       <button class="submit" type="submit">
         Special Button made by a Parrot
@@ -21,7 +21,17 @@
       </video>
       <div class="player-controls">
         <div class="progress-bar">
-          <div class="progress-bar-fill"></div>
+          <div class="progress-bar-fill">
+            <!-- <div class="draggable"></div> -->
+          </div>
+          <!-- <input
+            type="range"
+            class="alt-progress-bar"
+            step="0.05"
+            min="0"
+            max="1"
+            value="1"
+          /> -->
         </div>
         <div class="player-buttons">
           <button class="my-btn-play">Play</button>

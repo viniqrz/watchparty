@@ -1,13 +1,13 @@
 const btnUploadVideo = document.querySelector('.submit');
 const inputVideo = document.querySelector('.input-video');
 const video = document.querySelector('#my-video');
-const videoForm = document.getElementById('video-form');
 const source1 = document.getElementById('source-video');
 const btnPlay = document.querySelector('.my-btn-play');
 const btnPause = document.querySelector('.my-btn-pause');
 const inputVolume = document.querySelector('.input-volume');
 const progressBar = document.querySelector('.progress-bar');
 const fillProgressBar = document.querySelector('.progress-bar-fill');
+const draggable = document.querySelector('.draggable');
 
 video.addEventListener('timeupdate', () => {
   const progress = video.currentTime / video.duration;
@@ -16,10 +16,7 @@ video.addEventListener('timeupdate', () => {
 })
 
 btnPlay.addEventListener('click', (e) => {
-  // e.preventDefault();
-  // console.log(video)
   video.play();
-  console.log('PLAY')
 })
 
 btnPause.addEventListener('click', (e) => {
@@ -29,6 +26,55 @@ btnPause.addEventListener('click', (e) => {
 inputVolume.addEventListener('change', (e) => {
   video.volume = inputVolume.value;
 })
+
+const barX0 = progressBar.getBoundingClientRect().left;
+const barX1 = progressBar.getBoundingClientRect().left + progressBar.offsetWidth;
+
+progressBar.addEventListener('click', (e) => {
+  if (e.clientX > barX0 && e.clientX < barX1) {
+    const absProgress = e.clientX - barX0;
+    const relativeProgress = absProgress / progressBar.offsetWidth;
+    video.currentTime = relativeProgress * video.duration;
+
+    const action = receivedAction || {
+      id: Math.random().toString().slice(16),
+      user: myId,
+      date: Date.now()
+    };
+
+    socket.emit('play', video.currentTime, Date.now(), action);
+    receivedAction = null;
+
+    video.play();
+  }
+});
+
+// let dragado = false;
+// const startDraggable = draggable.getBoundingClientRect().left;
+// let startX;
+// let currentX;
+// let dragTimer = null;
+
+// draggable.addEventListener('mousedown', (e) => {
+//   dragado = true;
+//   startX = e.clientX;
+//   dragTimer = setInterval(() => {
+//     etarget.dispatchEvent(event)
+//   })
+// }); 
+
+// document.body.addEventListener('mouseover', (e) => {
+//   if (dragado) {
+//     currentX = e.clientX;
+//     console.log(startDraggable, startX, currentX);
+//     const xDiff = currentX - startX;
+//   }
+// })
+
+// document.body.addEventListener('mouseup', () => {
+//   dragado = false;
+//   clearInterval(dragTimer);
+// });
 
 
 const myId = Math.random().toString().slice(16);
@@ -41,12 +87,12 @@ let sourceId = null;
 let myUserList = [];
 let receivedAction = null;
 
-setInterval(() => {
-  time1 = Date.now();
-  socket.emit('ping', time1);
-  console.log(video.currentTime);
-  console.log(Date.now());
-}, 3000)
+// setInterval(() => {
+//   time1 = Date.now();
+//   socket.emit('ping', time1);
+//   console.log(video.currentTime);
+//   console.log(Date.now());
+// }, 3000)
 
 
 socket.emit('joined', myId);

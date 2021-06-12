@@ -59,9 +59,9 @@ socket.on('uploaded', (user, fileName) => {
   // video.currentTime = 0;
 });
 
-// video.addEventListener('seeked', () => {
-//   video.pause();
-// })
+video.addEventListener('seeked', () => {
+  video.pause();
+})
 
 video.addEventListener('play', () => {
   const action = receivedAction || {

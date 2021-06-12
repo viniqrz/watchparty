@@ -67,9 +67,13 @@ video.addEventListener('seeked', () => {
 })
 
 video.addEventListener('play', () => {
-  if (preventEcho) return;
+  if (preventEcho) {
+    video.pause();
+    return
+  };
 
   preventEcho = true;
+
   setTimeout(() => {
     preventEcho = false;
   }, 5000);

@@ -63,6 +63,11 @@ socket.on('uploaded', (user, fileName) => {
 });
 
 video.addEventListener('seeked', () => {
+  if (firstTime) {
+    firstTime = false;
+    return
+  }
+
   video.pause();
 })
 

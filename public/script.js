@@ -34,10 +34,9 @@ socket.on('pong', (time2) => {
 })
 
 socket.on('play', (initialTime, initialDate, id, action) => {
+  if (action.user === myId && receivedAction !== action) return;
 
   receivedAction = action;
-
-  if (action.user === myId) return;
 
   const currentDate = Date.now();
   const timeDiff = (currentDate - initialDate) / 1000;

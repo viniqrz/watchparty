@@ -33,7 +33,7 @@ socket.on('pong', (time2) => {
   console.log(myId + ' PING: ' + (time2 - time1));
 })
 
-socket.on('play', (initialTime, initialDate, id, action) => {
+socket.on('play', (initialTime, initialDate, action) => {
   receivedAction = action;
 
   if (action.user === myId) return;
@@ -48,6 +48,7 @@ socket.on('play', (initialTime, initialDate, id, action) => {
 
 socket.on('pause', () => {
   video.pause();
+  receivedAction = null;
 });
 
 socket.on('uploaded', (user, fileName) => {
@@ -71,14 +72,16 @@ video.addEventListener('seeked', () => {
 video.addEventListener('play', () => {
   const action = receivedAction || {
     id: Math.random().toString().slice(16),
-    user: myId
+    user: myId,
+    date: Date.now()
   };
 
-  socket.emit('play', video.currentTime, Date.now(), myId, action);
+  socket.emit('play', video.currentTime, Date.now(), action);
   receivedAction = null;
 })
 
 video.addEventListener('pause', () => {
+  receivedAction = null;
   socket.emit('pause', Date.now());
 })
 

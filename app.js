@@ -21,7 +21,7 @@ io.on('connection', socket => {
   })
 
   socket.on('pause', (initialDate) => {
-    io.emit('pause', '');
+    socket.broadcast.emit('pause', '');
   })
 
   socket.on('ping', (time1) => {

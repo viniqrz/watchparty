@@ -95,5 +95,6 @@ btnUploadVideo.addEventListener('click', (e) => {
 
   video.load();
   video.currentTime = 0;
+  video.play();
 });
 

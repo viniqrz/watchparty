@@ -16,8 +16,8 @@ io.on('connection', socket => {
     socket.broadcast.emit('uploaded', user, fileName);
   })
 
-  socket.on('play', (initialTime, initialDate) => {
-    socket.broadcast.emit('play', initialTime, initialDate);
+  socket.on('play', (initialTime, initialDate, count) => {
+    socket.broadcast.emit('play', initialTime, initialDate, count);
   })
 
   socket.on('pause', (initialDate) => {

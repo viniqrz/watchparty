@@ -11,6 +11,7 @@ let socket = io();
 
 let time1;
 let firstTime = true;
+let myCount = 0;
 
 setInterval(() => {
   time1 = Date.now();
@@ -19,14 +20,26 @@ setInterval(() => {
   console.log(Date.now());
 }, 3000)
 
+setInterval(() => {
+  myCount = 0;
+}, 5000);
+
 socket.on('pong', (time2) => {
   console.log(myId + ' PING: ' + (time2 - time1));
 })
 
-socket.on('play', (initialTime, initialDate) => {
+socket.on('play', (initialTime, initialDate, count) => {
+  myCount = count + 1;
+
+  if (count > 2) {
+    socket.emit('pause', Date.now());
+    return
+  }
+
   const currentDate = Date.now();
   const timeDiff = (currentDate - initialDate) / 1000;
   video.currentTime = initialTime + timeDiff;
+
   video.play();
 });
 
@@ -48,12 +61,12 @@ video.addEventListener('seeked', () => {
   //   firstTime = false;
   //   return
   // }
-  video.pause();
-  socket.emit('pause', Date.now());
+  // video.pause();
+  // socket.emit('pause', Date.now());
 })
 
 video.addEventListener('play', () => {
-  socket.emit('play', video.currentTime, Date.now());
+  socket.emit('play', video.currentTime, Date.now(), myCount);
 })
 
 video.addEventListener('pause', () => {

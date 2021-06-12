@@ -65,8 +65,8 @@ video.addEventListener('seeked', () => {
   //   firstTime = false;
   //   return
   // }
-  // video.pause();
-  // socket.emit('pause', Date.now());
+  video.pause();
+  socket.emit('pause', Date.now());
 })
 
 video.addEventListener('play', () => {

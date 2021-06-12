@@ -11,8 +11,7 @@ let socket = io();
 
 let time1;
 let firstTime = true;
-let myCount = 0;
-let preventEcho = false;
+let sourceId = null;
 
 setInterval(() => {
   time1 = Date.now();
@@ -29,16 +28,19 @@ socket.on('pong', (time2) => {
   console.log(myId + ' PING: ' + (time2 - time1));
 })
 
-socket.on('play', (initialTime, initialDate, count) => {
+socket.on('play', (initialTime, initialDate, id, source) => {
 
-  const currentDate = Date.now();
-  const timeDiff = (currentDate - initialDate) / 1000;
-
-  if (timeDiff > 3) {
-    video.currentTime = initialTime + timeDiff;
+  if (source === null) {
+    sourceId = id;
   }
 
-  video.play();
+  if (source === null || source !== myId) {
+    const currentDate = Date.now();
+    const timeDiff = (currentDate - initialDate) / 1000;
+    video.currentTime = initialTime + timeDiff;
+
+    video.play();
+  }
 });
 
 socket.on('pause', () => {
@@ -64,18 +66,8 @@ video.addEventListener('seeked', () => {
 })
 
 video.addEventListener('play', () => {
-  // if (preventEcho) {
-  //   video.pause();
-  //   return
-  // };
 
-  // preventEcho = true;
-
-  // setTimeout(() => {
-  //   preventEcho = false;
-  // }, 3300);
-
-  socket.emit('play', video.currentTime, Date.now(), myCount);
+  socket.emit('play', video.currentTime, Date.now(), myId, sourceId);
 })
 
 video.addEventListener('pause', () => {

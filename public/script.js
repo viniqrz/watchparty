@@ -58,7 +58,7 @@ socket.on('uploaded', (user, fileName) => {
     <h4>User ${user} uploaded: ${fileName} and invited you to upload the same file.</h4>
   `);
 
-  // video.currentTime = 0;
+  video.currentTime = 0;
   // video.play();
 });
 

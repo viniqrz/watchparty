@@ -9,15 +9,20 @@ const io = new Server(server);
 
 app.use(express.static('public'));
 
+let idList = [];
+
 io.on('connection', socket => {
-  console.log('connect');
+  socket.on('joined', (id) => {
+    idList.push(id);
+    io.emit('joined', idList);
+  })
 
   socket.on('uploaded', (user, fileName) => {
     socket.broadcast.emit('uploaded', user, fileName);
   })
 
-  socket.on('play', (initialTime, initialDate, id, sourceId) => {
-    socket.broadcast.emit('play', initialTime, initialDate, id, sourceId);
+  socket.on('play', (initialTime, initialDate, user, action) => {
+    socket.broadcast.emit('play', initialTime, initialDate, user, action);
   })
 
   socket.on('pause', (initialDate) => {

@@ -12,6 +12,8 @@ let socket = io();
 let time1;
 let firstTime = true;
 let sourceId = null;
+let myUserList = [];
+let receivedAction = null;
 
 setInterval(() => {
   time1 = Date.now();
@@ -20,27 +22,29 @@ setInterval(() => {
   console.log(Date.now());
 }, 3000)
 
-setInterval(() => {
-  myCount = 0;
-}, 5000);
+
+socket.emit('joined', myId);
+
+socket.on('joined', userList => {
+  userList = [];
+});
 
 socket.on('pong', (time2) => {
   console.log(myId + ' PING: ' + (time2 - time1));
 })
 
-socket.on('play', (initialTime, initialDate, id, source) => {
+socket.on('play', (initialTime, initialDate, id, action) => {
 
-  if (source === null) {
-    sourceId = id;
-  }
+  receivedAction = action;
 
-  if (source === null || source !== myId) {
-    const currentDate = Date.now();
-    const timeDiff = (currentDate - initialDate) / 1000;
-    video.currentTime = initialTime + timeDiff;
+  if (action.user === myId) return;
 
-    video.play();
-  }
+  const currentDate = Date.now();
+  const timeDiff = (currentDate - initialDate) / 1000;
+  video.currentTime = initialTime + timeDiff;
+
+  video.play();
+
 });
 
 socket.on('pause', () => {
@@ -66,8 +70,13 @@ video.addEventListener('seeked', () => {
 })
 
 video.addEventListener('play', () => {
+  const action = receivedAction || {
+    id: Math.random().toString().slice(16),
+    user: myId
+  };
 
-  socket.emit('play', video.currentTime, Date.now(), myId, sourceId);
+  socket.emit('play', video.currentTime, Date.now(), myId, action);
+  receivedAction = null;
 })
 
 video.addEventListener('pause', () => {

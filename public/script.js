@@ -60,14 +60,9 @@ socket.on('uploaded', (user, fileName) => {
   video.pause();
 });
 
-// video.addEventListener('seeked', () => {
-//   // if (firstTime) {
-//   //   firstTime = false;
-//   //   return
-//   // }
-//   video.pause();
-//   socket.emit('pause', Date.now());
-// })
+video.addEventListener('seeked', () => {
+  receivedAction = null;
+})
 
 video.addEventListener('play', () => {
   const action = receivedAction || {

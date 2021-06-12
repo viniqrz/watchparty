@@ -1,9 +1,35 @@
-const uploadCc = document.querySelector(".upload-cc");
-const btnUploadVideo = document.querySelector('form button');
+const btnUploadVideo = document.querySelector('.submit');
 const inputVideo = document.querySelector('.input-video');
-const video = document.querySelector('video');
+const video = document.querySelector('#my-video');
 const videoForm = document.getElementById('video-form');
 const source1 = document.getElementById('source-video');
+const btnPlay = document.querySelector('.my-btn-play');
+const btnPause = document.querySelector('.my-btn-pause');
+const inputVolume = document.querySelector('.input-volume');
+const progressBar = document.querySelector('.progress-bar');
+const fillProgressBar = document.querySelector('.progress-bar-fill');
+
+video.addEventListener('timeupdate', () => {
+  const progress = video.currentTime / video.duration;
+  const fillWidth = progress * progressBar.offsetWidth;
+  fillProgressBar.style.width = fillWidth + 'px';
+})
+
+btnPlay.addEventListener('click', (e) => {
+  // e.preventDefault();
+  // console.log(video)
+  video.play();
+  console.log('PLAY')
+})
+
+btnPause.addEventListener('click', (e) => {
+  video.pause();
+})
+
+inputVolume.addEventListener('change', (e) => {
+  video.volume = inputVolume.value;
+})
+
 
 const myId = Math.random().toString().slice(16);
 
@@ -14,7 +40,6 @@ let firstTime = true;
 let sourceId = null;
 let myUserList = [];
 let receivedAction = null;
-let justSynced = false;
 
 setInterval(() => {
   time1 = Date.now();
@@ -39,6 +64,10 @@ socket.on('play', (initialTime, initialDate, action) => {
 
   if (action.user === myId) return;
 
+  const currentDate = Date.now();
+  const timeDiff = (currentDate - initialDate) / 1000;
+  video.currentTime = initialTime + timeDiff;
+
   video.play();
 
 });
@@ -54,56 +83,14 @@ socket.on('uploaded', (user, fileName) => {
   `);
 
   video.currentTime = 0;
-
   video.pause();
 });
 
-socket.on('sync', (initialDate, initialTime) => {
-  const currentDate = Date.now();
-  const timeDiff = currentDate - initialDate;
-  video.currentTime = initialTime + timeDiff;
-
-  justSynced = true;
-  setInterval(() => {
-    justSynced = false;
-  }, 2500);
-});
-
-let timer;
-let lastTimeUpdate = 0;
-
-video.addEventListener('timeupdate', () => {
-  if ((video.currentTime - lastTimeUpdate) > 3) {
-    socket.emit('sync', Date.now(), video.currentTime);
-  }
-
-  lastTimeUpdate = video.currentTime;
-});
-
-// video.addEventListener('seeking', () => {
-//   if (!justSynced) {
-//     clearTimeout(timer);
-
-//     timer = setTimeout(() => {
-//       console.log('aaaaaaaaaaaaaaaaaaaa');
-//       socket.emit('sync', Date.now(), video.currentTime);
-//     }, 600);
-//   }
-
-//   justSynced = true;
-//   setInterval(() => {
-//     justSynced = false;
-//   }, 2500);
-// })
-
-document.body.addEventListener('mouseup', () => {
-  // if (seeked) {
-  //   seeked = false;
-  //   alert(1);
-  // }
+video.addEventListener('seeked', () => {
+  receivedAction = null;
 })
 
-video.addEventListener('play', () => {
+btnPlay.addEventListener('click', () => {
   const action = receivedAction || {
     id: Math.random().toString().slice(16),
     user: myId,
@@ -114,7 +101,7 @@ video.addEventListener('play', () => {
   receivedAction = null;
 })
 
-video.addEventListener('pause', () => {
+btnPause.addEventListener('click', () => {
   receivedAction = null;
   socket.emit('pause', Date.now());
 })
@@ -135,4 +122,3 @@ btnUploadVideo.addEventListener('click', (e) => {
 
   video.load();
 });
-

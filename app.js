@@ -10,11 +10,42 @@ const io = new Server(server);
 app.use(express.static('public'));
 
 let idList = [];
+// let centralSyncTime = 0;
+let timeObject = {};
 
 io.on('connection', socket => {
+  io.to(socket.id).emit('connected', socket.id);
+
   socket.on('joined', (id) => {
     idList.push(id);
     io.emit('joined', idList);
+  })
+
+  socket.on('timeupdate', (currentTime) => {
+    timeObject[socket.id] = currentTime;
+    console.log(timeObject);
+
+    let timeArr = [];
+    let idArr = [];
+
+    for (const id in timeObject) {
+      timeArr.push(timeObject[id]);
+      idArr.push(id);
+    }
+
+    const maxTime = Math.max(...timeArr);
+
+    console.log(maxTime);
+
+    timeArr.forEach((el, index) => {
+      if (el === maxTime) return;
+
+      const timeDiff = maxTime - el;
+
+      if (timeDiff < 5) return;
+
+      io.to(idArr[index]).emit('sync', (maxTime - el));
+    });
   })
 
   socket.on('sync', (initialDate, initialTime) => {
@@ -26,6 +57,7 @@ io.on('connection', socket => {
   })
 
   socket.on('play', (initialTime, initialDate, action) => {
+    // if (syncTime === null) centralSyncTime = 0;
     socket.broadcast.emit('play', initialTime, initialDate, action);
   })
 
@@ -38,7 +70,8 @@ io.on('connection', socket => {
     io.to(socket.id).emit('pong', time2);
   })
 
-  socket.on('disconnect', (socket) => {
+  socket.on('disconnect', () => {
+    delete timeObject[socket.id];
     console.log('disconnect');
   });
 })

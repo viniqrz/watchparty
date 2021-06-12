@@ -4,29 +4,44 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
-    <script defer src="https://vjs.zencdn.net/7.11.4/video.min.js"></script>
     <script defer src="script.js"></script>
     <title>VideoJS</title>
   </head>
   <body>
-    </iframe>
     <form id="video-form">
       <input class="input-video" type="file" accept="video/*" required />
-      <button type="submit">Special Button made by a Parrot</button>
+      <button class="submit" type="submit">
+        Special Button made by a Parrot
+      </button>
     </form>
-    <video id="my-video" class="" controls preload="auto">
-      <source id="source-video" src="" type="video/mp4" />
-      <!-- <track onclick="alert(1)" class="upload-cc" label="Upload" srclang="en" /> -->
-      <p class="">
-        To view this video please enable JavaScript, and consider upgrading to a
-        web browser that
-        <a href="https://videojs.com/html5-video-support/" target="_blank"
-          >supports HTML5 video</a
-        >
-      </p>
-    </video>
+    <div class="player-container">
+      <video id="my-video" controls class="">
+        <source id="source-video" src="" type="video/mp4" />
+      </video>
+      <div class="player-controls">
+        <div class="progress-bar">
+          <div class="progress-bar-fill"></div>
+        </div>
+        <div class="player-buttons">
+          <button class="my-btn-play">Play</button>
+          <button class="my-btn-pause">Pause</button>
+          <i class="fas fa-volume-down"></i>
+          <input
+            type="range"
+            class="input-volume"
+            step="0.05"
+            min="0"
+            max="1"
+            value="1"
+          />
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://kit.fontawesome.com/a0787ba8d3.js"
+      crossorigin="anonymous"
+    ></script>
     <script src="/socket.io/socket.io.js"></script>
   </body>
 </html>

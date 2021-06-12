@@ -53,15 +53,15 @@ socket.on('pause', () => {
 
 socket.on('uploaded', (user, fileName) => {
   video.insertAdjacentHTML('beforebegin', `
-    <h4>User ${user} uploaded: ${fileName} and invites you to upload the same file.</h4>
+    <h4>User ${user} uploaded: ${fileName} and invited you to upload the same file.</h4>
   `);
 
-  video.currentTime = 0;
+  // video.currentTime = 0;
 });
 
-video.addEventListener('seeked', () => {
-  video.pause();
-})
+// video.addEventListener('seeked', () => {
+//   video.pause();
+// })
 
 video.addEventListener('play', () => {
   const action = receivedAction || {
@@ -95,6 +95,5 @@ btnUploadVideo.addEventListener('click', (e) => {
 
   video.load();
   video.currentTime = 0;
-  video.play();
 });
 

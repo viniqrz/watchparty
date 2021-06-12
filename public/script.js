@@ -76,7 +76,7 @@ video.addEventListener('play', () => {
 
   setTimeout(() => {
     preventEcho = false;
-  }, 2000);
+  }, 3300);
 
   socket.emit('play', video.currentTime, Date.now(), myCount);
 })

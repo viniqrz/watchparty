@@ -16,13 +16,11 @@ io.on('connection', socket => {
     socket.broadcast.emit('uploaded', user, fileName);
   })
 
-  socket.on('play', () => {
-    console.log('play');
-    io.emit('play', '');
+  socket.on('play', (initialTime, initialDate) => {
+    socket.broadcast.emit('play', initialTime, initialDate);
   })
 
-  socket.on('pause', () => {
-    console.log('pause');
+  socket.on('pause', (initialDate) => {
     io.emit('pause', '');
   })
 

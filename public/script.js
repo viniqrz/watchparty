@@ -43,6 +43,15 @@ socket.on('uploaded', (user, fileName) => {
   video.pause();
 });
 
+video.addEventListener('seeked', () => {
+  // if (firstTime) {
+  //   firstTime = false;
+  //   return
+  // }
+  video.pause();
+  socket.emit('pause', Date.now());
+})
+
 video.addEventListener('play', () => {
   socket.emit('play', video.currentTime, Date.now());
 })
@@ -50,7 +59,6 @@ video.addEventListener('play', () => {
 video.addEventListener('pause', () => {
   socket.emit('pause', Date.now());
 })
-
 
 btnUploadVideo.addEventListener('click', (e) => {
   e.preventDefault();

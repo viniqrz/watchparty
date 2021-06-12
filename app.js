@@ -17,6 +17,10 @@ io.on('connection', socket => {
     io.emit('joined', idList);
   })
 
+  socket.on('sync', (initialDate, initialTime) => {
+    socket.broadcast.emit('sync', initialDate, initialTime);
+  })
+
   socket.on('uploaded', (user, fileName) => {
     socket.broadcast.emit('uploaded', user, fileName);
   })

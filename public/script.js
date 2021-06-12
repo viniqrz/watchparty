@@ -14,6 +14,7 @@ let firstTime = true;
 let sourceId = null;
 let myUserList = [];
 let receivedAction = null;
+let justSynced = false;
 
 setInterval(() => {
   time1 = Date.now();
@@ -38,10 +39,6 @@ socket.on('play', (initialTime, initialDate, action) => {
 
   if (action.user === myId) return;
 
-  const currentDate = Date.now();
-  const timeDiff = (currentDate - initialDate) / 1000;
-  video.currentTime = initialTime + timeDiff;
-
   video.play();
 
 });
@@ -57,11 +54,39 @@ socket.on('uploaded', (user, fileName) => {
   `);
 
   video.currentTime = 0;
+
   video.pause();
 });
 
-video.addEventListener('seeked', () => {
-  receivedAction = null;
+socket.on('sync', (initialDate, initialTime) => {
+  const currentDate = Date.now();
+  const timeDiff = currentDate - initialDate;
+  video.currentTime = initialTime;
+
+  justSynced = true;
+  setInterval(() => {
+    justSynced = false;
+  }, 2500);
+});
+
+let timer;
+
+video.addEventListener('seeking', () => {
+  if (!justSynced) {
+    clearTimeout(timer);
+
+    timer = setTimeout(() => {
+      console.log('aaaaaaaaaaaaaaaaaaaa');
+      socket.emit('sync', Date.now(), video.currentTime);
+    }, 600);
+  }
+})
+
+document.body.addEventListener('mouseup', () => {
+  // if (seeked) {
+  //   seeked = false;
+  //   alert(1);
+  // }
 })
 
 video.addEventListener('play', () => {

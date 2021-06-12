@@ -43,7 +43,6 @@ socket.on('play', (initialTime, initialDate, action) => {
   video.currentTime = initialTime + timeDiff;
 
   video.play();
-
 });
 
 socket.on('pause', (action) => {
@@ -52,7 +51,6 @@ socket.on('pause', (action) => {
   if (action.user === myId) return;
 
   video.pause();
-  receivedAction = null;
 });
 
 socket.on('uploaded', (user, fileName) => {

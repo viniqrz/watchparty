@@ -30,16 +30,13 @@ socket.on('pong', (time2) => {
 })
 
 socket.on('play', (initialTime, initialDate, count) => {
-  // myCount = count + 1;
-
-  if (count > 2) {
-    socket.emit('pause', Date.now());
-    return
-  }
 
   const currentDate = Date.now();
   const timeDiff = (currentDate - initialDate) / 1000;
-  video.currentTime = initialTime + timeDiff;
+
+  if (timeDiff > 3) {
+    video.currentTime = initialTime + timeDiff;
+  }
 
   video.play();
 });
@@ -67,16 +64,16 @@ video.addEventListener('seeked', () => {
 })
 
 video.addEventListener('play', () => {
-  if (preventEcho) {
-    video.pause();
-    return
-  };
+  // if (preventEcho) {
+  //   video.pause();
+  //   return
+  // };
 
-  preventEcho = true;
+  // preventEcho = true;
 
-  setTimeout(() => {
-    preventEcho = false;
-  }, 3300);
+  // setTimeout(() => {
+  //   preventEcho = false;
+  // }, 3300);
 
   socket.emit('play', video.currentTime, Date.now(), myCount);
 })

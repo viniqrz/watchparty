@@ -57,6 +57,7 @@ socket.on('uploaded', (user, fileName) => {
   `);
 
   // video.currentTime = 0;
+  video.play();
 });
 
 video.addEventListener('seeked', () => {
@@ -101,6 +102,6 @@ btnUploadVideo.addEventListener('click', (e) => {
 
   video.load();
   video.currentTime = 0;
-  video.play();
+  // video.play();
 });
 

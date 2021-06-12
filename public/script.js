@@ -12,7 +12,7 @@ let socket = io();
 let time1;
 let firstTime = true;
 let myCount = 0;
-let echoPrevent = false;
+let preventEcho = false;
 
 setInterval(() => {
   time1 = Date.now();

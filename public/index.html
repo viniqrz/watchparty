@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="https://vjs.zencdn.net/7.11.4/video.min.js"></script>
+    <script defer src="script.js"></script>
+    <title>VideoJS</title>
+  </head>
+  <body>
+    <form id="video-form">
+      <input class="input-video" type="file" accept="video/*" required />
+      <button type="submit">Special Button</button>
+    </form>
+    <video id="" class="" controls preload="auto">
+      <source id="source-video" src="" type="video/mp4" />
+      <!-- <track onclick="alert(1)" class="upload-cc" label="Upload" srclang="en" /> -->
+      <p class="">
+        To view this video please enable JavaScript, and consider upgrading to a
+        web browser that
+        <a href="https://videojs.com/html5-video-support/" target="_blank"
+          >supports HTML5 video</a
+        >
+      </p>
+    </video>
+    <script src="/socket.io/socket.io.js"></script>
+  </body>
+</html>

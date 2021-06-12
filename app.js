@@ -25,8 +25,8 @@ io.on('connection', socket => {
     socket.broadcast.emit('play', initialTime, initialDate, action);
   })
 
-  socket.on('pause', (initialDate) => {
-    socket.broadcast.emit('pause', '');
+  socket.on('pause', (action) => {
+    socket.broadcast.emit('pause', action);
   })
 
   socket.on('ping', (time1) => {

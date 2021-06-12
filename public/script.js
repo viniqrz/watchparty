@@ -75,8 +75,14 @@ video.addEventListener('play', () => {
 })
 
 video.addEventListener('pause', () => {
+  const action = receivedAction || {
+    id: Math.random().toString().slice(16),
+    user: myId,
+    date: Date.now()
+  };
+
+  socket.emit('pause', action);
   receivedAction = null;
-  socket.emit('pause', Date.now());
 })
 
 btnUploadVideo.addEventListener('click', (e) => {
@@ -95,5 +101,6 @@ btnUploadVideo.addEventListener('click', (e) => {
 
   video.load();
   video.currentTime = 0;
+  video.play();
 });
 

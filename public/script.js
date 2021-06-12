@@ -46,7 +46,11 @@ socket.on('play', (initialTime, initialDate, action) => {
 
 });
 
-socket.on('pause', () => {
+socket.on('pause', (action) => {
+  receivedAction = action;
+
+  if (action.user === myId) return;
+
   video.pause();
   receivedAction = null;
 });
@@ -57,12 +61,12 @@ socket.on('uploaded', (user, fileName) => {
   `);
 
   // video.currentTime = 0;
-  video.play();
+  // video.play();
 });
 
-video.addEventListener('seeked', () => {
-  video.pause();
-})
+// video.addEventListener('seeked', () => {
+//   video.pause();
+// })
 
 video.addEventListener('play', () => {
   const action = receivedAction || {
@@ -102,6 +106,5 @@ btnUploadVideo.addEventListener('click', (e) => {
 
   video.load();
   video.currentTime = 0;
-  // video.play();
 });
 

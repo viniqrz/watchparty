@@ -80,6 +80,11 @@ video.addEventListener('seeking', () => {
       socket.emit('sync', Date.now(), video.currentTime);
     }, 600);
   }
+
+  justSynced = true;
+  setInterval(() => {
+    justSynced = false;
+  }, 2500);
 })
 
 document.body.addEventListener('mouseup', () => {

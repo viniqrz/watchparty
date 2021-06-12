@@ -12,6 +12,7 @@ let socket = io();
 let time1;
 let firstTime = true;
 let myCount = 0;
+let echoPrevent = false;
 
 setInterval(() => {
   time1 = Date.now();
@@ -29,7 +30,7 @@ socket.on('pong', (time2) => {
 })
 
 socket.on('play', (initialTime, initialDate, count) => {
-  myCount = count + 1;
+  // myCount = count + 1;
 
   if (count > 2) {
     socket.emit('pause', Date.now());
@@ -66,6 +67,13 @@ video.addEventListener('seeked', () => {
 })
 
 video.addEventListener('play', () => {
+  if (preventEcho) return;
+
+  preventEcho = true;
+  setTimeout(() => {
+    preventEcho = false;
+  }, 5000);
+
   socket.emit('play', video.currentTime, Date.now(), myCount);
 })
 

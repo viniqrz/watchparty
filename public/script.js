@@ -62,14 +62,14 @@ socket.on('uploaded', (user, fileName) => {
   // video.play();
 });
 
-video.addEventListener('seeked', () => {
-  if (firstTime) {
-    firstTime = false;
-    return
-  }
+// video.addEventListener('seeked', () => {
+//   if (firstTime) {
+//     firstTime = false;
+//     return
+//   }
 
-  video.pause();
-})
+//   video.pause();
+// })
 
 video.addEventListener('play', () => {
   const action = receivedAction || {

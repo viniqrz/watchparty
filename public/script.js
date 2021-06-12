@@ -57,16 +57,10 @@ socket.on('uploaded', (user, fileName) => {
   `);
 
   video.currentTime = 0;
-  video.pause();
 });
 
 video.addEventListener('seeked', () => {
-  // if (firstTime) {
-  //   firstTime = false;
-  //   return
-  // }
   video.pause();
-  socket.emit('pause', Date.now());
 })
 
 video.addEventListener('play', () => {
@@ -100,5 +94,6 @@ btnUploadVideo.addEventListener('click', (e) => {
   socket.emit('uploaded', myId, inputVideo.files[0].name);
 
   video.load();
+  video.currentTime = 0;
 });
 

@@ -13,7 +13,8 @@ let time1;
 let firstTime = true;
 let sourceId = null;
 let myUserList = [];
-let receivedAction = null;
+let receivedPlayAction = null;
+let receivedPauseAction = null;
 
 setInterval(() => {
   time1 = Date.now();
@@ -34,7 +35,7 @@ socket.on('pong', (time2) => {
 })
 
 socket.on('play', (initialTime, initialDate, action) => {
-  receivedAction = action;
+  receivedPlayAction = action;
 
   if (action.user === myId) return;
 
@@ -46,7 +47,7 @@ socket.on('play', (initialTime, initialDate, action) => {
 });
 
 socket.on('pause', (action) => {
-  receivedAction = action;
+  receivedPauseAction = action;
 
   if (action.user === myId) return;
 
@@ -72,25 +73,26 @@ socket.on('uploaded', (user, fileName) => {
 // })
 
 video.addEventListener('play', () => {
-  const action = receivedAction || {
+  const action = receivedPlayAction || {
     id: Math.random().toString().slice(16),
     user: myId,
     date: Date.now()
   };
 
   socket.emit('play', video.currentTime, Date.now(), action);
-  receivedAction = null;
+  receivedPlayAction = null;
 })
 
 video.addEventListener('pause', () => {
-  const action = receivedAction || {
+  const action = receivedPauseAction || {
     id: Math.random().toString().slice(16),
     user: myId,
     date: Date.now()
   };
 
   socket.emit('pause', action);
-  receivedAction = null;
+  receivedPauseAction = null;
+  receivedPlayAction = null;
 })
 
 btnUploadVideo.addEventListener('click', (e) => {

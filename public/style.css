@@ -15,30 +15,56 @@
 
 .player-container {
   width: 50%;
-  background-color: tomato;
+  background-color: darkslategray;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  margin: 0 auto;
+}
+
+.player-controls {
+  height: 2.4rem;
+  background-color: darkslateblue;
+  opacity: 1;
+  width: 100%;
+}
+
+.player-buttons {
+  height: 70%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 2%;
+  padding-right: 10%;
+}
+
+.my-btn-play {
+  height: 100%;
+  border: none;
+  background-color: rgba(1, 1, 1, 0);
+  color: white;
+  cursor: pointer;
+}
+
+.control-volume {
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 25%;
 }
 
 #my-video {
   width: 100%;
 }
 
-.player-controls {
-  height: 2rem;
-  background-color: blueviolet;
-  z-index: 999;
-}
-
 .progress-bar {
   background-color: aqua;
-  height: 0.6rem;
+  height: 30%;
   cursor: pointer;
 }
 
 .progress-bar-fill {
-  background-color: rgb(255, 136, 0);
+  background-color: white;
   height: 100%;
   transition: all 0.1s;
   display: flex;

@@ -8,27 +8,60 @@ const inputVolume = document.querySelector('.input-volume');
 const progressBar = document.querySelector('.progress-bar');
 const fillProgressBar = document.querySelector('.progress-bar-fill');
 const draggable = document.querySelector('.draggable');
+const controlIcon = document.querySelector('.my-btn-play i');
+const myId = Math.random().toString().slice(16);
+
+let socket = io();
+
+let receivedAction = null;
 
 video.addEventListener('timeupdate', () => {
   const progress = video.currentTime / video.duration;
   const fillWidth = progress * progressBar.offsetWidth;
   fillProgressBar.style.width = fillWidth + 'px';
-})
+});
 
-btnPlay.addEventListener('click', (e) => {
+const controlPlay = () => {
   video.play();
-})
+  controlIcon.className = 'fas fa-pause';
 
-btnPause.addEventListener('click', (e) => {
+  const action = receivedAction || {
+    id: Math.random().toString().slice(16),
+    user: myId,
+    date: Date.now(),
+  };
+
+  socket.emit('play', video.currentTime, Date.now(), action);
+  receivedAction = null;
+};
+
+const controlPause = () => {
   video.pause();
-})
+  controlIcon.className = 'fas fa-play';
+
+  receivedAction = null;
+
+  socket.emit('pause', Date.now());
+};
+
+const controlMedia = () => {
+  if (video.paused) {
+    controlPlay();
+    return;
+  }
+
+  controlPause();
+};
+
+btnPlay.addEventListener('click', controlMedia);
 
 inputVolume.addEventListener('change', (e) => {
   video.volume = inputVolume.value;
-})
+});
 
 const barX0 = progressBar.getBoundingClientRect().left;
-const barX1 = progressBar.getBoundingClientRect().left + progressBar.offsetWidth;
+const barX1 =
+  progressBar.getBoundingClientRect().left + progressBar.offsetWidth;
 
 progressBar.addEventListener('click', (e) => {
   if (e.clientX > barX0 && e.clientX < barX1) {
@@ -39,7 +72,7 @@ progressBar.addEventListener('click', (e) => {
     const action = receivedAction || {
       id: Math.random().toString().slice(16),
       user: myId,
-      date: Date.now()
+      date: Date.now(),
     };
 
     socket.emit('play', video.currentTime, Date.now(), action);
@@ -61,7 +94,7 @@ progressBar.addEventListener('click', (e) => {
 //   dragTimer = setInterval(() => {
 //     etarget.dispatchEvent(event)
 //   })
-// }); 
+// });
 
 // document.body.addEventListener('mouseover', (e) => {
 //   if (dragado) {
@@ -76,34 +109,15 @@ progressBar.addEventListener('click', (e) => {
 //   clearInterval(dragTimer);
 // });
 
-
-const myId = Math.random().toString().slice(16);
-
-let socket = io();
-
-let time1;
-let firstTime = true;
-let sourceId = null;
-let myUserList = [];
-let receivedAction = null;
-
-// setInterval(() => {
-//   time1 = Date.now();
-//   socket.emit('ping', time1);
-//   console.log(video.currentTime);
-//   console.log(Date.now());
-// }, 3000)
-
-
 socket.emit('joined', myId);
 
-socket.on('joined', userList => {
+socket.on('joined', (userList) => {
   userList = [];
 });
 
 socket.on('pong', (time2) => {
   console.log(myId + ' PING: ' + (time2 - time1));
-})
+});
 
 socket.on('play', (initialTime, initialDate, action) => {
   receivedAction = action;
@@ -115,7 +129,6 @@ socket.on('play', (initialTime, initialDate, action) => {
   video.currentTime = initialTime + timeDiff;
 
   video.play();
-
 });
 
 socket.on('pause', () => {
@@ -124,9 +137,12 @@ socket.on('pause', () => {
 });
 
 socket.on('uploaded', (user, fileName) => {
-  video.insertAdjacentHTML('beforebegin', `
+  video.insertAdjacentHTML(
+    'beforebegin',
+    `
     <h4>User ${user} uploaded: ${fileName} and invites you to upload the same file.</h4>
-  `);
+  `
+  );
 
   video.currentTime = 0;
   video.pause();
@@ -134,23 +150,23 @@ socket.on('uploaded', (user, fileName) => {
 
 video.addEventListener('seeked', () => {
   receivedAction = null;
-})
+});
 
-btnPlay.addEventListener('click', () => {
-  const action = receivedAction || {
-    id: Math.random().toString().slice(16),
-    user: myId,
-    date: Date.now()
-  };
+// btnPlay.addEventListener('click', () => {
+//   const action = receivedAction || {
+//     id: Math.random().toString().slice(16),
+//     user: myId,
+//     date: Date.now(),
+//   };
 
-  socket.emit('play', video.currentTime, Date.now(), action);
-  receivedAction = null;
-})
+//   socket.emit('play', video.currentTime, Date.now(), action);
+//   receivedAction = null;
+// });
 
-btnPause.addEventListener('click', () => {
-  receivedAction = null;
-  socket.emit('pause', Date.now());
-})
+// btnPause.addEventListener('click', () => {
+//   receivedAction = null;
+//   socket.emit('pause', Date.now());
+// });
 
 btnUploadVideo.addEventListener('click', (e) => {
   e.preventDefault();
@@ -160,9 +176,13 @@ btnUploadVideo.addEventListener('click', (e) => {
   const videoUrl = window.URL.createObjectURL(inputVideo.files[0]);
 
   source1.src = videoUrl;
-  video.insertAdjacentHTML('beforebegin', `
-    <h4>You uploaded: ${inputVideo.files[0].name}</h4>
-  `);
+
+  // video.insertAdjacentHTML(
+  //   'beforebegin',
+  //   `
+  //   <h4>You uploaded: ${inputVideo.files[0].name}</h4>
+  // `
+  // );
 
   socket.emit('uploaded', myId, inputVideo.files[0].name);
 

@@ -16,7 +16,7 @@
       </button>
     </form>
     <div class="player-container">
-      <video id="my-video" controls class="">
+      <video id="my-video" class="">
         <source id="source-video" src="" type="video/mp4" />
       </video>
       <div class="player-controls">
@@ -34,17 +34,18 @@
           /> -->
         </div>
         <div class="player-buttons">
-          <button class="my-btn-play">Play</button>
-          <button class="my-btn-pause">Pause</button>
-          <i class="fas fa-volume-down"></i>
-          <input
-            type="range"
-            class="input-volume"
-            step="0.05"
-            min="0"
-            max="1"
-            value="1"
-          />
+          <button class="my-btn-play"><i class="fas fa-play"></i></button>
+          <div class="control-volume">
+            <i class="fas fa-volume-down"></i>
+            <input
+              type="range"
+              class="input-volume"
+              step="0.05"
+              min="0"
+              max="1"
+              value="1"
+            />
+          </div>
         </div>
       </div>
     </div>

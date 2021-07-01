@@ -9,11 +9,23 @@ const progressBar = document.querySelector('.progress-bar');
 const fillProgressBar = document.querySelector('.progress-bar-fill');
 const draggable = document.querySelector('.draggable');
 const controlIcon = document.querySelector('.my-btn-play i');
-const myId = Math.random().toString().slice(16);
+
+let myId;
+let myIdList;
 
 let socket = io();
 
 let receivedAction = null;
+let localSocketId;
+
+socket.on('connected', (socketId) => {
+  myId = socketId;
+  socket.emit('joined', myId);
+});
+
+socket.on('joined', (userList) => {
+  myIdList = userList;
+});
 
 video.addEventListener('timeupdate', () => {
   const progress = video.currentTime / video.duration;
@@ -82,39 +94,6 @@ progressBar.addEventListener('click', (e) => {
   }
 });
 
-// let dragado = false;
-// const startDraggable = draggable.getBoundingClientRect().left;
-// let startX;
-// let currentX;
-// let dragTimer = null;
-
-// draggable.addEventListener('mousedown', (e) => {
-//   dragado = true;
-//   startX = e.clientX;
-//   dragTimer = setInterval(() => {
-//     etarget.dispatchEvent(event)
-//   })
-// });
-
-// document.body.addEventListener('mouseover', (e) => {
-//   if (dragado) {
-//     currentX = e.clientX;
-//     console.log(startDraggable, startX, currentX);
-//     const xDiff = currentX - startX;
-//   }
-// })
-
-// document.body.addEventListener('mouseup', () => {
-//   dragado = false;
-//   clearInterval(dragTimer);
-// });
-
-socket.emit('joined', myId);
-
-socket.on('joined', (userList) => {
-  userList = [];
-});
-
 socket.on('pong', (time2) => {
   console.log(myId + ' PING: ' + (time2 - time1));
 });
@@ -129,10 +108,12 @@ socket.on('play', (initialTime, initialDate, action) => {
   video.currentTime = initialTime + timeDiff;
 
   video.play();
+  controlIcon.className = 'fas fa-pause';
 });
 
 socket.on('pause', () => {
   video.pause();
+  controlIcon.className = 'fas fa-play';
   receivedAction = null;
 });
 
@@ -151,22 +132,6 @@ socket.on('uploaded', (user, fileName) => {
 video.addEventListener('seeked', () => {
   receivedAction = null;
 });
-
-// btnPlay.addEventListener('click', () => {
-//   const action = receivedAction || {
-//     id: Math.random().toString().slice(16),
-//     user: myId,
-//     date: Date.now(),
-//   };
-
-//   socket.emit('play', video.currentTime, Date.now(), action);
-//   receivedAction = null;
-// });
-
-// btnPause.addEventListener('click', () => {
-//   receivedAction = null;
-//   socket.emit('pause', Date.now());
-// });
 
 btnUploadVideo.addEventListener('click', (e) => {
   e.preventDefault();
@@ -187,4 +152,50 @@ btnUploadVideo.addEventListener('click', (e) => {
   socket.emit('uploaded', myId, inputVideo.files[0].name);
 
   video.load();
+});
+
+// CHAT
+
+const btnSend = document.querySelector('#form button');
+const input = document.querySelector('#input');
+const ul = document.querySelector('#messages');
+const chatContainer = document.querySelector('.chat-container');
+const btnSaveNick = document.querySelector('#save-nickname');
+const overlay = document.querySelector('.overlay');
+const inputNickname = document.querySelector('#nickname-input');
+
+let user = {
+  id: Math.random().toString().slice(2),
+  nickname: '',
+};
+
+btnSaveNick.addEventListener('click', (e) => {
+  e.preventDefault();
+  if (inputNickname.value.trim().length < 2) {
+    alert('tell me ur nickname bro');
+    return;
+  }
+  user.nickname = inputNickname.value;
+  socket.emit('user', user);
+  overlay.classList.add('hidden');
+});
+
+btnSend.addEventListener('click', (e) => {
+  e.preventDefault();
+
+  if (input.value) {
+    socket.emit('chat message', input.value);
+
+    ul.insertAdjacentHTML(
+      'beforeend',
+      `<li><b>${user.nickname}:</b> ${input.value}</li>`
+    );
+
+    input.value = '';
+  }
+});
+
+socket.on('chat message', (msg) => {
+  ul.insertAdjacentHTML('beforeend', `<li>${msg}</li>`);
+  window.scrollIntoView(ul.lastElementChild);
 });
